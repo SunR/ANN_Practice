@@ -89,7 +89,7 @@ print f.value
 
 #then caluclate gradients, working backwards from order used to calculate values 
 
-f.gradient = 1.0 #tugging output upwards slightly; to pull down, use -1
+f.gradient = 1.0 #tugging output upwards slightly; to pull down, use -1. Making this value hus (500) results in huge tugs. Is this normal? 
 sigmoid1.backward()
 print fNoSigma.gradient
 addition2.backward() #writes gradients back into all five input Units
