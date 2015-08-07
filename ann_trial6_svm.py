@@ -139,9 +139,9 @@ labels[4] = -1
 labels[5] = 1
 
 svm = SVM()
-
+global numCorrect
+numCorrect =0
 def evaluateTrainingAccuracy():
-    numCorrect = 0
     for i in range (len(data)):
         #print "entered loop"
         x = data[i, 0]
@@ -150,18 +150,21 @@ def evaluateTrainingAccuracy():
         trueLabel = labels[i,]
         predictedLabel = 1 if svm.forward(Unit(x, 0.0), Unit(y, 0.0)).value > 0 else -1 #predicted label guessed by svm
         if predictedLabel == trueLabel:
+            global numCorrect
+            #print "labels matched"
             numCorrect += 1
+            #print numCorrect
     return numCorrect/len(data)
 
 #the actual learning loop
 
-for iter in range(400): #HOW DOES ITERATING THROUGH ONLY 6 INPUTS 400 TIMES HELP??
+for iter in range(1000): #HOW DOES ITERATING THROUGH ONLY 6 INPUTS 400 TIMES HELP??
     i = int(random.randrange(len(data)))
     x = data[i, 0]
     y = data[i, 1]
     label = labels[i,]
 
-    if iter % 25 ==0: #every 10 iterations print accuracy
+    if iter % 25 == 0: #every 10 iterations print accuracy
         print "training accuracy at iteration", iter, evaluateTrainingAccuracy()
 
         
