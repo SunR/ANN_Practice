@@ -3,6 +3,7 @@ from math import *
 import numpy as np
 import astroML
 
+#IF BIGGER ANN OR SVM CODE DOESN'T WORK, CHECK THESE ANALYTICAL GRADIENTS WITH NUMERICAL GRADIENTS
 
 #Function: f = sigma(ax + by+c)
 
@@ -46,13 +47,14 @@ class sigmoidGate (object):
         self.unit1 = unit1
         
     def forward (self):
-        print "i'm being called"
         self.unitAbove = Unit ((1.0/(1.0 + exp(-self.unit1.value))), 0.0)
         print self.unitAbove
         return self.unitAbove
     
     def backward (self):
-        self.unit1.gradient = self.unitAbove * (1 - self.unitAbove) * self.unitAbove.gradient #calculated derivative of sigmoid funtion
+        print "backward sigmoid gate"
+        print self.unitAbove.gradient
+        self.unit1.gradient = self.unitAbove.value * (1 - self.unitAbove.value) * self.unitAbove.gradient #calculated derivative of sigmoid funtion
 
 #five inputs
 a = Unit(1.0, 0.0)
@@ -62,6 +64,9 @@ c = Unit(-3.0, 0.0)
 x = Unit(-1.0, 0.0)
 y = Unit(3.0, 0.0)
 step = 1e-2
+
+f = (1.0/(1.0 + exp(-x.value)) * (a.value  * x.value + b.value * y.value + c.value))
+print "original f", f
 
 #first calculate forwards
 multiplication1 = multiplicationGate(a, x)
@@ -85,11 +90,27 @@ print f.value
 #then caluclate gradients, working backwards from order used to calculate values 
 
 f.gradient = 1.0 #tugging output upwards slightly; to pull down, use -1
-addition2.backward
-addition1.backward
-multiplication2.backward
-multiplication1.backward
+sigmoid1.backward()
+print fNoSigma.gradient
+addition2.backward() #writes gradients back into all five input Units
+addition1.backward()
+multiplication2.backward()
+multiplication1.backward()
 
+print c.gradient
+
+a.value += step * a.gradient
+b.value += step * b.gradient
+c.value += step * c.gradient
+x.value += step * x.gradient
+y.value += step * y.gradient
+
+print a.value, b.value, c.value, x.value, y.value
+
+f = (1.0/(1.0 + exp(-x.value)) * (a.value  * x.value + b.value * y.value + c.value))
+
+print "f after tugging:", f
+    
 
 
 #then apply gradients to inputs
