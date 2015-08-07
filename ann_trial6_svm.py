@@ -57,15 +57,15 @@ class Circuit (object):
         self.y = y
         
     def forward(self):
-        self.multiplication1 = multiplicationGate(a, x)
-        self.multiplication2 = multiplicationGate(b, y)
+        self.multiplication1 = multiplicationGate(self.a, self.x)
+        self.multiplication2 = multiplicationGate(self.b, self.y)
         self.ax = self.multiplication1.forward()
         self.by = self.multiplication2.forward()
-        self.addition1 = additionGate(ax, by)
+        self.addition1 = additionGate(self.ax, self.by)
         self.axplusby = self.addition1.forward()
-        self.addition2 = additionGate(axplusby, c)
-        self.f = addition2.forward()
-        return f
+        self.addition2 = additionGate(self.axplusby, self.c)
+        self.f = self.addition2.forward()
+        return self.f
         
     def backward(self, gradientTop):
         self.f.gradient = gradientTop
@@ -81,11 +81,11 @@ class SVM (object):
         self.c = Unit(-1.0, 0.0)
         
     def forward(self, x, y): #inputs, but in the form of Units this time
-        print "entered forward"
-        self.x = Unit(x, 0.0)
-        self.y = Unit(y, 0.0)
+        #print "entered forward"
+        self.x = x
+        self.y = y
         self.circuit = Circuit(self.a, self.b, self.c, self.x, self.y)
-        self.unitOutput = circuit.forward ()
+        self.unitOutput = self.circuit.forward ()
         return self.unitOutput #first guess after 1 tug (?)
     
     #seeing if guess matched label, if not we tug
@@ -138,17 +138,17 @@ labels[3] = -1
 labels[4] = -1
 labels[5] = 1
 
-svm = SVM
+svm = SVM()
 
 def evaluateTrainingAccuracy():
     numCorrect = 0
     for i in range (len(data)):
-        print "entered loop"
+        #print "entered loop"
         x = data[i, 0]
         y = data[i, 1]
-        svm.forward(x, y)
+        svm.forward(Unit(x, 0.0), Unit(y, 0.0))
         trueLabel = labels[i,]
-        predictedLabel = 1 if svm.forward.value > 0 else -1 #predicted label guessed by svm
+        predictedLabel = 1 if svm.forward(Unit(x, 0.0), Unit(y, 0.0)).value > 0 else -1 #predicted label guessed by svm
         if predictedLabel == trueLabel:
             numCorrect += 1
     return numCorrect/len(data)
