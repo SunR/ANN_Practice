@@ -1,5 +1,6 @@
 from __future__ import division
 from math import *
+import random
 import numpy as np
 import astroML
 
@@ -54,6 +55,7 @@ class Circuit (object):
         self.c = c
         self.x = x
         self.y = y
+        
     def forward(self):
         self.multiplication1 = multiplicationGate(a, x)
         self.multiplication2 = multiplicationGate(b, y)
@@ -73,16 +75,17 @@ class Circuit (object):
         self.multiplication1.backward()
         
 class SVM (object):
-    def __init__(self, x, y, circuit):
+    def __init__(self):
         self.a = Unit(1.0, 0.0) #change these to truly random starting conditions eventually!!
         self.b = Unit(-2.0, 0.0)
         self.c = Unit(-1.0, 0.0)
-        self.x = x
-        self.y = y
-        self.circuit = circuit
         
     def forward(self, x, y): #inputs, but in the form of Units this time
-        self.unitOutput = circuit.forward (x, y, self.a, self.b, self.c)
+        print "entered forward"
+        self.x = Unit(x, 0.0)
+        self.y = Unit(y, 0.0)
+        self.circuit = Circuit(self.a, self.b, self.c, self.x, self.y)
+        self.unitOutput = circuit.forward ()
         return self.unitOutput #first guess after 1 tug (?)
     
     #seeing if guess matched label, if not we tug
@@ -117,6 +120,7 @@ labels = np.empty ((6,))
 
 ##    data[0,0] = 1.2
 ##    data [0,1] = 0.7
+#This can be done by reading an input file
 data[0] = np.array([1.2, 0.7])
 data[1] = np.array([-0.3, -0.5])
 data[2] = np.array([3.0, 0.1])
@@ -125,6 +129,7 @@ data[4] = np.array([-1.0, 1.1])
 data[5] = np.array([2.1, -3])
 
 print data
+print len(data)
 
 labels[0] = 1
 labels[1] = -1
@@ -133,4 +138,30 @@ labels[3] = -1
 labels[4] = -1
 labels[5] = 1
 
+svm = SVM
 
+def evaluateTrainingAccuracy():
+    numCorrect = 0
+    for i in range (len(data)):
+        print "entered loop"
+        x = data[i, 0]
+        y = data[i, 1]
+        svm.forward(x, y)
+        trueLabel = labels[i,]
+        predictedLabel = 1 if svm.forward.value > 0 else -1 #predicted label guessed by svm
+        if predictedLabel == trueLabel:
+            numCorrect += 1
+    return numCorrect/len(data)
+
+#the actual learning loop
+
+for iter in range(400): #HOW DOES ITERATING THROUGH ONLY 6 INPUTS 400 TIMES HELP??
+    i = int(random.randrange(len(data)))
+    x = data[i, 0]
+    y = data[i, 1]
+    label = labels[i,]
+
+    if iter % 25 ==0: #every 10 iterations print accuracy
+        print "training accuracy at iteration", iter, evaluateTrainingAccuracy()
+
+        
