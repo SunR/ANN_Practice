@@ -41,7 +41,7 @@ def evaluateTrainingAccuracy():
         predictedLabel = 1 if a*x + b*y + c > 0 else -1
         if predictedLabel == trueLabel:
             numCorrect += 1
-    #print numCorrect
+    #print "num correct", numCorrect
     return numCorrect / len(data) 
     
 
@@ -57,8 +57,10 @@ for iter in range (400):
     #print "predicted label", predictedLabel
     #print "true label", trueLabel
     if predictedLabel <  1 and trueLabel == 1:
+        print "pulling up, predicted = ", predictedLabel, "true = ", trueLabel
         df = 1.0
     if predictedLabel > -1 and trueLabel == -1:
+        print "pulling down, predicted = ", predictedLabel, "true = ", trueLabel
         df = -1.0
         
     da = x * df
@@ -74,7 +76,7 @@ for iter in range (400):
     b = b + step*db
     c = c + step*dc
 
-    #print a, b, c
+    print a, b, c
 
     if iter % 25 == 0:
         print "training accuracy at iteration", iter, "is", evaluateTrainingAccuracy()
