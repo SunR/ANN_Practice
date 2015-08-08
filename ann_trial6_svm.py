@@ -21,7 +21,6 @@ class multiplicationGate (object):
         
     def forward (self): #check if all arguments are necessary
         self.unitAbove = Unit(self.unit1.value * self.unit2.value, 0.0) #is the "self" necessary?
-        #unitAbove = Unit(1.0, 1.0)
         return self.unitAbove
         
     def backward (self):
@@ -81,7 +80,9 @@ class SVM (object):
         self.c = Unit(-1.0, 0.0)
         
     def forward(self, x, y): #inputs, but in the form of Units this time
-        #print "entered forward"
+        self.a = Unit(1.0, 0.0) #change these to truly random starting conditions eventually!!
+        self.b = Unit(-2.0, 0.0)
+        self.c = Unit(-1.0, 0.0)
         self.x = x
         self.y = y
         self.circuit = Circuit(self.a, self.b, self.c, self.x, self.y)
@@ -90,20 +91,22 @@ class SVM (object):
     
     #seeing if guess matched label, if not we tug
     def backward(self, label):
-        if label == -1 and unitOutput.value > -1: #too high, pull down
+        #print type(self.unitOutput)
+        self.tug = 1.0
+        if label == -1 and self.unitOutput.value > -1: #too high, pull down
             self.tug = -1.0
-        if label == 1 and unitOutput.value < 1: #too low, pull up
+        if label == 1 and self.unitOutput.value < 1: #too low, pull up
             self.tug = 1.0
-        circuit.backward(self.tug)
+        self.circuit.backward(self.tug)
 
     def updateInputs(self):
         step = 0.01
-        a = a.value + step * a.gradient
-        b = b.value + step * b.gradient
-        c = c.value + step * c.gradient
+        self.a = self.a.value + step * self.a.gradient
+        self.b = self.b.value + step * self.b.gradient
+        self.c = self.c.value + step * self.c.gradient
 
     #run through entire learning iteration
-    def learnIteration (x, y, label):
+    def learnIteration (self, x, y, label):
         self.forward(x, y)
         self.backward(label)
         self.updateInputs()
@@ -128,8 +131,8 @@ data[3] = np.array([-0.1, -1.0])
 data[4] = np.array([-1.0, 1.1])
 data[5] = np.array([2.1, -3])
 
-print data
-print len(data)
+#print data
+#print len(data)
 
 labels[0] = 1
 labels[1] = -1
@@ -139,30 +142,30 @@ labels[4] = -1
 labels[5] = 1
 
 svm = SVM()
-global numCorrect
-numCorrect =0
+
+#runs through all data and checks if svm correctly predits each label
 def evaluateTrainingAccuracy():
+    numCorrect = 0
     for i in range (len(data)):
-        #print "entered loop"
         x = data[i, 0]
         y = data[i, 1]
-        svm.forward(Unit(x, 0.0), Unit(y, 0.0))
+        x = Unit(x, 0.0)
+        y = Unit(y, 0.0)
+        unitOutput = svm.forward(x, y)
         trueLabel = labels[i,]
-        predictedLabel = 1 if svm.forward(Unit(x, 0.0), Unit(y, 0.0)).value > 0 else -1 #predicted label guessed by svm
+        predictedLabel = 1 if unitOutput.value > 0 else -1 #predicted label guessed by svm
         if predictedLabel == trueLabel:
-            global numCorrect
-            #print "labels matched"
             numCorrect += 1
-            #print numCorrect
     return numCorrect/len(data)
 
 #the actual learning loop
-
-for iter in range(1000): #HOW DOES ITERATING THROUGH ONLY 6 INPUTS 400 TIMES HELP??
+#CLEARLY SOMETHING WRONG WITH THE LEARNING, learnIteration maybe. Check that function.
+for iter in range(400): #HOW DOES ITERATING THROUGH ONLY 6 INPUTS 400 TIMES HELP??
     i = int(random.randrange(len(data)))
     x = data[i, 0]
     y = data[i, 1]
     label = labels[i,]
+    svm.learnIteration(Unit(x, 0.0), Unit(y, 0.0), label)
 
     if iter % 25 == 0: #every 10 iterations print accuracy
         print "training accuracy at iteration", iter, evaluateTrainingAccuracy()
