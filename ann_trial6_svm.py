@@ -80,9 +80,9 @@ class SVM (object):
         self.c = Unit(-1.0, 0.0)
         
     def forward(self, x, y): #inputs, but in the form of Units this time
-        self.a = Unit(1.0, 0.0) #change these to truly random starting conditions eventually!!
-        self.b = Unit(-2.0, 0.0)
-        self.c = Unit(-1.0, 0.0)
+##        self.a = Unit(1.0, 0.0) #change these to truly random starting conditions eventually!!
+##        self.b = Unit(-2.0, 0.0)
+##        self.c = Unit(-1.0, 0.0)
         self.x = x
         self.y = y
         self.circuit = Circuit(self.a, self.b, self.c, self.x, self.y)
@@ -101,9 +101,11 @@ class SVM (object):
 
     def updateInputs(self):
         step = 0.01
-        self.a = self.a.value + step * self.a.gradient
-        self.b = self.b.value + step * self.b.gradient
-        self.c = self.c.value + step * self.c.gradient
+        #print "original inputs", self.a.value, self.b.value, self.c.value
+        self.a.value = self.a.value + step * self.a.gradient
+        self.b.value = self.b.value + step * self.b.gradient
+        self.c.value = self.c.value + step * self.c.gradient
+        #print "new inputs", self.a.value, self.b.value, self.c.value
 
     #run through entire learning iteration
     def learnIteration (self, x, y, label):
@@ -160,7 +162,7 @@ def evaluateTrainingAccuracy():
 
 #the actual learning loop
 #CLEARLY SOMETHING WRONG WITH THE LEARNING, learnIteration maybe. Check that function.
-for iter in range(400): #HOW DOES ITERATING THROUGH ONLY 6 INPUTS 400 TIMES HELP??
+for iter in range(1000): #HOW DOES ITERATING THROUGH ONLY 6 INPUTS 400 TIMES HELP??
     i = int(random.randrange(len(data)))
     x = data[i, 0]
     y = data[i, 1]
