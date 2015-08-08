@@ -8,9 +8,7 @@ import astroML
 #Learning a support vector machine, very popular type of linear classifier
 #Just using binary-labeled 2-D vectors for now, [x1, y1] --> -1 (or 1)
 #Use f = ax + by + c, and x and y are fixed inputs, a, b, c are "improved" by tugging (backprop)
-x = -2.0
-y = 5.0
-z = -4.0
+
 step = 1e-2
 
 class multiplicationGate (object):
@@ -80,9 +78,6 @@ class SVM (object):
         self.c = Unit(-1.0, 0.0)
         
     def forward(self, x, y): #inputs, but in the form of Units this time
-##        self.a = Unit(1.0, 0.0) #change these to truly random starting conditions eventually!!
-##        self.b = Unit(-2.0, 0.0)
-##        self.c = Unit(-1.0, 0.0)
         self.x = x
         self.y = y
         self.circuit = Circuit(self.a, self.b, self.c, self.x, self.y)
@@ -119,9 +114,6 @@ D = 2 #dimension of input vectors
 data = np.empty((6, 2))  #7 rows, 1 col, each row is 1 vector (or in this case array)
 labels = np.empty ((6,))
 
-
-##    data[0,0] = 1.2
-##    data [0,1] = 0.7
 #This can be done by reading an input file
 data[0] = np.array([1.2, 0.7])
 data[1] = np.array([-0.3, -0.5])
@@ -129,9 +121,6 @@ data[2] = np.array([3.0, 0.1])
 data[3] = np.array([-0.1, -1.0])
 data[4] = np.array([-1.0, 1.1])
 data[5] = np.array([2.1, -3])
-
-#print data
-#print len(data)
 
 labels[0] = 1
 labels[1] = -1
