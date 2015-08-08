@@ -92,10 +92,12 @@ class SVM (object):
     #seeing if guess matched label, if not we tug
     def backward(self, label):
         #print type(self.unitOutput)
-        self.tug = 1.0
+        self.tug = 0.0
         if label == -1 and self.unitOutput.value > -1: #too high, pull down
+            #print "pulling down"
             self.tug = -1.0
         if label == 1 and self.unitOutput.value < 1: #too low, pull up
+            #print "pulling up"
             self.tug = 1.0
         self.circuit.backward(self.tug)
 
