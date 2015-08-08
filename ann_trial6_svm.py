@@ -91,23 +91,18 @@ class SVM (object):
     
     #seeing if guess matched label, if not we tug
     def backward(self, label):
-        #print type(self.unitOutput)
         self.tug = 0.0
         if label == -1 and self.unitOutput.value > -1: #too high, pull down
-            #print "pulling down"
             self.tug = -1.0
         if label == 1 and self.unitOutput.value < 1: #too low, pull up
-            #print "pulling up"
             self.tug = 1.0
         self.circuit.backward(self.tug)
 
     def updateInputs(self):
         step = 0.01
-        #print "original inputs", self.a.value, self.b.value, self.c.value
         self.a.value = self.a.value + step * self.a.gradient
         self.b.value = self.b.value + step * self.b.gradient
         self.c.value = self.c.value + step * self.c.gradient
-        #print "new inputs", self.a.value, self.b.value, self.c.value
 
     #run through entire learning iteration
     def learnIteration (self, x, y, label):
@@ -163,8 +158,8 @@ def evaluateTrainingAccuracy():
     return numCorrect/len(data)
 
 #the actual learning loop
-#CLEARLY SOMETHING WRONG WITH THE LEARNING, learnIteration maybe. Check that function.
-for iter in range(1000): #HOW DOES ITERATING THROUGH ONLY 6 INPUTS 400 TIMES HELP??
+#I STILL THINK THIS STARTS OUT TOO ACCURATE, CHECK EXPECTED OUTPUT AGAIN LATER
+for iter in range(1000): 
     i = int(random.randrange(len(data)))
     x = data[i, 0]
     y = data[i, 1]
